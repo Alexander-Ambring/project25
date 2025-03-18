@@ -23,7 +23,7 @@ post('/login') do
 
   if BCrypt::Password.new(pwdigest) == password
     session[:id] = id
-    redirect("/")
+    redirect("/sets")
   else
     "Fel lösenord"
   end
@@ -46,4 +46,8 @@ post('/users/new') do
   else
     "Lösenorden matchar inte"
   end
+end
+
+get('/sets') do
+  slim(:sets)
 end
