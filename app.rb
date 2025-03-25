@@ -51,3 +51,7 @@ end
 get('/sets') do
   slim(:sets)
 end
+
+get('/Scarlet_&_Violet') do
+  slim(:"set/scarlet_violet")
+end
