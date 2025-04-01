@@ -17,9 +17,9 @@ post('/login') do
   password = params[:password]
   db = SQLite3::Database.new('db/datab.db')
   db.results_as_hash = true
-  results = db.execute("SELECT * FROM user WHERE username = ?", username).first
-  pwdigest = results["pwdigest"]
-  id = results["id"]
+  results = db.execute("SELECT * FROM user WHERE Username = ?", username).first
+  pwdigest = results["Pwdigest"]
+  id = results["Id"]
 
   if BCrypt::Password.new(pwdigest) == password
     session[:id] = id
@@ -41,7 +41,7 @@ post('/users/new') do
   if password == password_confirm
     password_digest = BCrypt::Password.create(password)
     db = SQLite3::Database.new('db/datab.db')
-    db.execute('INSERT INTO user (username,pwdigest) VALUES (?,?)', [username, password_digest])
+    db.execute('INSERT INTO user (Username,Pwdigest) VALUES (?,?)', [username, password_digest])
     redirect('/')
   else
     "Lösenorden matchar inte"
@@ -49,9 +49,29 @@ post('/users/new') do
 end
 
 get('/sets') do
-  slim(:sets)
+  db = SQLite3::Database.new("db/datab.db")
+  db.results_as_hash = true
+  result = db.execute("SELECT * FROM sets")
+  slim(:sets,locals:{sets:result})
 end
 
-get('/Scarlet_&_Violet') do
-  slim(:"set/scarlet_violet")
+get('/scarlet_violet') do
+  db = SQLite3::Database.new("db/datab.db")
+  db.results_as_hash = true
+  result = db.execute("SELECT * FROM cards")
+  slim(:"set/scarlet_violet",locals:{cards:result})
+end
+
+get('/admin') do
+  db = SQLite3::Database.new("db/datab.db")
+  db.results_as_hash = true
+  result = db.execute("SELECT * FROM sets")
+  slim(:"admin/index",locals:{sets:result})
+end
+
+post('/admin/:id/delete') do
+  id = params[:id].to_i
+  db = SQLite3::Database.new("db/chinook-crud.db")
+  db.execute("DELETE FROM albums WHERE albumid = ?", id)
+  redirect("/albums")
 end
