@@ -71,7 +71,22 @@ end
 
 post('/admin/:id/delete') do
   id = params[:id].to_i
-  db = SQLite3::Database.new("db/chinook-crud.db")
-  db.execute("DELETE FROM albums WHERE albumid = ?", id)
-  redirect("/albums")
+  db = SQLite3::Database.new("db/datab.db")
+  db.execute("DELETE FROM sets WHERE setid = ?", id)
+  redirect("/admin")
+end
+
+get('/admin/new') do
+  slim(:"admin/new")
+end
+
+post('/admin/new') do
+  name = params[:name]
+  setid = params[:setid].to_i
+  gateway = params[:gateway]
+  img = "sv#{setid}.png"
+  p "DATA: #{name} OCH #{setid}"
+  db = SQLite3::Database.new("db/datab.db")
+  db.execute("INSERT INTO sets (name, setid, gateway, imagesource) VALUES (?,?,?,?)", [name, setid, gateway, img])
+  redirect('/admin')
 end
